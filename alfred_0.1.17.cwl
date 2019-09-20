@@ -91,7 +91,7 @@ arguments:
       }
   - position: 2
     prefix: '--outfile'
-    shellQuote: false
+    shellQuote: true
     valueFrom: |-
       ${
           if (inputs.outname) {
