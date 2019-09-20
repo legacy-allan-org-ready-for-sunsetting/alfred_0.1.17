@@ -1,4 +1,4 @@
-ROM ubuntu:14.04
+FROM ubuntu:14.04
 
 LABEL maintainer="Sinisa Ivkovic (ivkovics@mskcc.org)" \
       version.ubuntu="14.04" \
