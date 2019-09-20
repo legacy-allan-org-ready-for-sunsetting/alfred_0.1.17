@@ -10,6 +10,8 @@ inputs:
     inputBinding:
       position: 0
       prefix: '--reference'
+    secondaryFiles:
+      - .fai
   - id: ignore_rg
     type: boolean?
     inputBinding:
@@ -105,5 +107,5 @@ arguments:
 requirements:
   - class: ShellCommandRequirement
   - class: DockerRequirement
-    dockerPull: 'cmopipeline/alfred:v0.1.17'
+    dockerPull: 'mskcc/alfred:0.1.17'
   - class: InlineJavascriptRequirement

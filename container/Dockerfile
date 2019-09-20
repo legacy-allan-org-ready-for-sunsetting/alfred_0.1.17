@@ -21,6 +21,9 @@ RUN apt-get update && apt-get install -y \
     libncurses-dev \
     liblzma-dev \
     zlib1g-dev \
+    locales \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LANG=en_US.UTF-8 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -44,15 +47,6 @@ RUN apt-get update && apt-get install -y r-base-core r-base-dev \
 RUN apt-get install locales \
     && locale-gen en_US.UTF-8 \
     && update-locale LANG=en_US.UTF-8
-
-# Multi-stage build
-FROM alpine:latest
-RUN mkdir -p /opt/alfred/bin
-WORKDIR /opt/alfred/bin
-COPY --from=0 /opt/alfred/bin/alfred .
-
-# Workdir
-WORKDIR /root/
 
 # Add Alfred to PATH
 ENV PATH="/opt/alfred/bin:${PATH}"
