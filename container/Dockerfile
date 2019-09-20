@@ -1,8 +1,7 @@
-FROM ubuntu:14.04
+# use the ubuntu base image
+FROM ubuntu:18.04
 
-LABEL maintainer="Sinisa Ivkovic (ivkovics@mskcc.org)" \
-      version.ubuntu="14.04" \
-      version.tabix="v0.1.17"
+MAINTAINER Tobias Rausch rausch@embl.de
 
 # install required packages
 RUN apt-get update && apt-get install -y \
@@ -22,34 +21,38 @@ RUN apt-get update && apt-get install -y \
     libncurses-dev \
     liblzma-dev \
     zlib1g-dev \
-    locales \
-    && locale-gen en_US.UTF-8 \
-    && update-locale LANG=en_US.UTF-8
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # set environment
 ENV BOOST_ROOT /usr
-ENV EBROOTHTSLIB /opt/htslib
+ENV DEBIAN_FRONTEND=noninteractive 
 
 # install alfred
 RUN cd /opt \
-    && git clone https://github.com/samtools/htslib.git \
-    && cd /opt/htslib \
-    && make \
-    && make lib-static \
-    && make install
-RUN cd /opt \
-    && git clone --branch v0.1.17 https://github.com/tobiasrausch/alfred.git \
+    && git clone --recursive https://github.com/tobiasrausch/alfred.git \
     && cd /opt/alfred/ \
     && make STATIC=1 all \
     && make install
 
 # install R packages
-RUN sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
-RUN gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
-RUN gpg -a --export E084DAB9 | sudo apt-key add -
-RUN apt-get update && apt-get -y install r-base
-RUN R -e "install.packages(c('ggplot2'), repos='http://cran.us.r-project.org')"
 
+RUN apt-get update && apt-get install -y r-base-core r-base-dev \
+    ## install R dependencies
+    && R -e "install.packages('ggplot2', dependencies=TRUE, repos='http://cran.rstudio.com/')" 
+
+RUN apt-get install locales \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LANG=en_US.UTF-8
+
+# Multi-stage build
+FROM alpine:latest
+RUN mkdir -p /opt/alfred/bin
+WORKDIR /opt/alfred/bin
+COPY --from=0 /opt/alfred/bin/alfred .
+
+# Workdir
+WORKDIR /root/
+
+# Add Alfred to PATH
 ENV PATH="/opt/alfred/bin:${PATH}"
