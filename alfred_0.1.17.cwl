@@ -27,7 +27,7 @@ inputs:
     inputBinding:
       position: 3
     secondaryFiles:
-      - .bai
+      - ^.bai
   - id: read_group
     type: string?
     inputBinding:
