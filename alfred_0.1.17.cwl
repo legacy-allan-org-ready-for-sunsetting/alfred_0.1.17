@@ -89,7 +89,7 @@ arguments:
           if (inputs.ignore_rg) {
               return inputs.bam.basename.replace('.bam', '') + '.alfred.tsv.gz'
           }
-          return inputs.bam.basename.replace('.bam', '') + 'RG.alfred.tsv.gz'
+          return inputs.bam.basename.replace('.bam', '') + '.alfred.per_readgroup.tsv.gz'
       }
   - position: 2
     prefix: '--outfile'
